@@ -1,0 +1,149 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using BinaryIO;
+
+namespace BinaryTag.Tags
+{
+    public class ListTag : ITag, IList<ITag>
+    {
+        private readonly IList<ITag> _list = new List<ITag>();
+
+        public TagType Type => TagType.List;
+
+        [Category("データ"), Description("アイテムの数")]
+        public TagType ElementTagType { get; private set; }
+
+        [Category("データ"), Description("アイテムの数")]
+        public int Count => _list.Count;
+
+        [Browsable(false)] public bool IsReadOnly => false;
+
+        public ListTag(TagType type = TagType.Byte)
+        {
+            ElementTagType = type;
+        }
+
+        public IEnumerator<ITag> GetEnumerator()
+        {
+            return _list.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public void Add(ITag item)
+        {
+            ThrowIfNotMatchType(item);
+
+            _list.Add(item);
+        }
+
+        public void Clear()
+        {
+            _list.Clear();
+        }
+
+        public bool Contains(ITag item)
+        {
+            ThrowIfNotMatchType(item);
+
+            return _list.Contains(item);
+        }
+
+        public void CopyTo(ITag[] array, int arrayIndex)
+        {
+            _list.CopyTo(array, arrayIndex);
+        }
+
+        public bool Remove(ITag item)
+        {
+            ThrowIfNotMatchType(item);
+
+            return _list.Remove(item);
+        }
+
+        public int IndexOf(ITag item)
+        {
+            ThrowIfNotMatchType(item);
+
+            return _list.IndexOf(item);
+        }
+
+        public void Insert(int index, ITag item)
+        {
+            ThrowIfNotMatchType(item);
+
+            _list.Insert(index, item);
+        }
+
+        public void RemoveAt(int index)
+        {
+            _list.RemoveAt(index);
+        }
+
+        public ITag this[int index]
+        {
+            get => _list[index];
+            set
+            {
+                ThrowIfNotMatchType(value);
+
+                _list[index] = value;
+            }
+        }
+
+        public T Get<T>(int index) where T : ITag
+        {
+            return (T) _list[index];
+        }
+
+        public T GetOrNull<T>(int index) where T : class, ITag
+        {
+            return _list[index] as T;
+        }
+
+        public void Read(BinaryStream stream)
+        {
+            int len = stream.ReadInt();
+            ElementTagType = (TagType) stream.ReadByte();
+            for (int i = 0; i < len; i++)
+            {
+                ITag tag = TagFactory.CreateTag(ElementTagType);
+                tag.Read(stream);
+
+                Add(tag);
+            }
+        }
+
+        public void Write(BinaryStream stream)
+        {
+            stream.WriteInt(Count);
+            stream.WriteByte((byte) ElementTagType);
+            foreach (ITag tag in _list)
+            {
+                tag.Write(stream);
+            }
+        }
+
+        private void ThrowIfNotMatchType(ITag tag)
+        {
+            if (tag.Type != ElementTagType)
+                throw new InvalidOperationException();
+        }
+
+        public object Clone()
+        {
+            ListTag tag = new ListTag(ElementTagType);
+            foreach (ITag tag1 in _list)
+            {
+                tag.Add((ITag) tag1.Clone());
+            }
+
+            return tag;
+        }
+    }
+}
