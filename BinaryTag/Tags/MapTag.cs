@@ -94,7 +94,7 @@ namespace BinaryTag.Tags
             return null;
         }
 
-        public T GetOrNEmpty<T>(string key) where T : class, ITag, new()
+        public T GetOrEmpty<T>(string key) where T : class, ITag, new()
         {
             if (ContainsKey(key))
                 return _tags[key] as T;
