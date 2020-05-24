@@ -7,6 +7,11 @@
         <Description>binary key value store
 Not support Minecraft!</Description>
         <PackageProjectUrl>https://github.com/hiroki19990625/BinaryTag</PackageProjectUrl>
+        <Copyright>hiroki</Copyright>
+        <PackageLicenseUrl>https://github.com/hiroki19990625/BinaryTag/blob/master/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/hiroki19990625/BinaryTag.git</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>binary kvs file</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>
