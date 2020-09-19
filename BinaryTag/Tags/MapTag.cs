@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,7 +7,7 @@ using BinaryIO;
 
 namespace BinaryTag.Tags
 {
-    public class MapTag : ITag, IDictionary<string, ITag>
+    public class MapTag : ITag, IDictionary<string, ITag>, IEquatable<MapTag>
     {
         private readonly Dictionary<string, ITag> _tags = new Dictionary<string, ITag>();
 
@@ -102,6 +103,14 @@ namespace BinaryTag.Tags
             return new T();
         }
 
+        public T GetOrDefault<T>(string key, T defaultValue) where T : class, ITag
+        {
+            if (ContainsKey(key))
+                return _tags[key] as T;
+
+            return defaultValue;
+        }
+
         public void Read(BinaryStream stream)
         {
             int len = stream.ReadInt();
@@ -136,6 +145,36 @@ namespace BinaryTag.Tags
             }
 
             return mapTag;
+        }
+
+        public bool Equals(MapTag other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return _tags.SequenceEqual(other._tags);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((MapTag) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (_tags != null ? _tags.GetHashCode() : 0);
+        }
+
+        public static bool operator ==(MapTag left, MapTag right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(MapTag left, MapTag right)
+        {
+            return !Equals(left, right);
         }
     }
 }

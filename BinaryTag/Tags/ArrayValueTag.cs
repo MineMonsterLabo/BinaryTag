@@ -1,9 +1,12 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using BinaryIO;
 
 namespace BinaryTag.Tags
 {
-    public abstract class ArrayValueTag<T> : ITag, IEquatable<ArrayValueTag<T>>
+    public abstract class ArrayValueTag<T> : ITag, IEquatable<ArrayValueTag<T>>, IEnumerable<T>
     {
         public abstract TagType Type { get; }
 
@@ -21,6 +24,11 @@ namespace BinaryTag.Tags
         public abstract void Read(BinaryStream stream);
         public abstract void Write(BinaryStream stream);
 
+        public IEnumerator<T> GetEnumerator()
+        {
+            return ((IEnumerable<T>) Value).GetEnumerator();
+        }
+
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
@@ -33,7 +41,7 @@ namespace BinaryTag.Tags
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(Value, other.Value);
+            return this.SequenceEqual(other);
         }
 
         public abstract object Clone();
@@ -41,6 +49,11 @@ namespace BinaryTag.Tags
         public override int GetHashCode()
         {
             return Value != null ? Value.GetHashCode() : 0;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         public static bool operator ==(ArrayValueTag<T> left, ArrayValueTag<T> right)

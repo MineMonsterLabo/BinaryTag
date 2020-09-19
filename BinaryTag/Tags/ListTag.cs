@@ -2,11 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using BinaryIO;
 
 namespace BinaryTag.Tags
 {
-    public class ListTag : ITag, IList<ITag>
+    public class ListTag : ITag, IList<ITag>, IEquatable<ListTag>
     {
         private readonly IList<ITag> _list = new List<ITag>();
 
@@ -144,6 +145,39 @@ namespace BinaryTag.Tags
             }
 
             return tag;
+        }
+
+        public bool Equals(ListTag other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return _list.SequenceEqual(other._list) && ElementTagType == other.ElementTagType;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((ListTag) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((_list != null ? _list.GetHashCode() : 0) * 397) ^ (int) ElementTagType;
+            }
+        }
+
+        public static bool operator ==(ListTag left, ListTag right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(ListTag left, ListTag right)
+        {
+            return !Equals(left, right);
         }
     }
 }
