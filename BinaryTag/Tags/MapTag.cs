@@ -2,8 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
-using BinaryIO;
 
 namespace BinaryTag.Tags
 {
@@ -84,7 +84,7 @@ namespace BinaryTag.Tags
 
         public T Get<T>(string key) where T : ITag
         {
-            return (T) _tags[key];
+            return (T)_tags[key];
         }
 
         public T GetOrNull<T>(string key) where T : class, ITag
@@ -111,28 +111,28 @@ namespace BinaryTag.Tags
             return defaultValue;
         }
 
-        public void Read(BinaryStream stream)
+        public void Read(BinaryReader reader)
         {
-            int len = stream.ReadInt();
+            int len = reader.ReadInt32();
             for (int i = 0; i < len; i++)
             {
-                TagType type = (TagType) stream.ReadByte();
-                string name = stream.ReadStringUtf8();
+                TagType type = (TagType)reader.ReadByte();
+                string name = reader.ReadString();
                 ITag tag = TagFactory.CreateTag(type);
-                tag.Read(stream);
+                tag.Read(reader);
 
                 Add(name, tag);
             }
         }
 
-        public void Write(BinaryStream stream)
+        public void Write(BinaryWriter writer)
         {
-            stream.WriteInt(Count);
+            writer.Write(Count);
             foreach (KeyValuePair<string, ITag> tag in _tags)
             {
-                stream.WriteByte((byte) tag.Value.Type);
-                stream.WriteStringUtf8(tag.Key);
-                tag.Value.Write(stream);
+                writer.Write((byte)tag.Value.Type);
+                writer.Write(tag.Key);
+                tag.Value.Write(writer);
             }
         }
 
@@ -141,7 +141,7 @@ namespace BinaryTag.Tags
             MapTag mapTag = new MapTag();
             foreach (KeyValuePair<string, ITag> pair in _tags)
             {
-                mapTag[pair.Key] = (ITag) pair.Value.Clone();
+                mapTag[pair.Key] = (ITag)pair.Value.Clone();
             }
 
             return mapTag;
@@ -159,7 +159,7 @@ namespace BinaryTag.Tags
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((MapTag) obj);
+            return Equals((MapTag)obj);
         }
 
         public override int GetHashCode()

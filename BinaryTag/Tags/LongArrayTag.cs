@@ -1,4 +1,4 @@
-using BinaryIO;
+using System.IO;
 
 namespace BinaryTag.Tags
 {
@@ -14,24 +14,24 @@ namespace BinaryTag.Tags
         {
         }
 
-        public override void Read(BinaryStream stream)
+        public override void Read(BinaryReader reader)
         {
-            int len = stream.ReadInt();
+            int len = reader.ReadInt32();
             Value = new long[len];
             for (int i = 0; i < len; i++)
-                Value[i] = stream.ReadLong();
+                Value[i] = reader.ReadInt64();
         }
 
-        public override void Write(BinaryStream stream)
+        public override void Write(BinaryWriter writer)
         {
-            stream.WriteInt(Value.Length);
+            writer.Write(Value.Length);
             for (int i = 0; i < Value.Length; i++)
-                stream.WriteLong(Value[i]);
+                writer.Write(Value[i]);
         }
 
         public override object Clone()
         {
-            return new LongArrayTag((long[]) Value.Clone());
+            return new LongArrayTag((long[])Value.Clone());
         }
     }
 }

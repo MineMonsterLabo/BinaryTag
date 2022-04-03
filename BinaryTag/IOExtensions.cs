@@ -1,4 +1,4 @@
-using BinaryIO;
+using System.IO;
 using BinaryTag.Tags;
 
 namespace BinaryTag
@@ -7,19 +7,21 @@ namespace BinaryTag
     {
         public static byte[] ToByteArray(this MapTag tag)
         {
-            using (BinaryStream stream = new BinaryStream())
+            using (var stream = new MemoryStream())
+            using (BinaryWriter writer = new BinaryWriter(stream))
             {
-                tag.Write(stream);
+                tag.Write(writer);
                 return stream.ToArray();
             }
         }
 
         public static MapTag ToMapTag(this byte[] buf)
         {
-            using (BinaryStream stream = new BinaryStream(buf))
+            using (var stream = new MemoryStream())
+            using (BinaryReader reader = new BinaryReader(stream))
             {
                 MapTag tag = new MapTag();
-                tag.Read(stream);
+                tag.Read(reader);
                 return tag;
             }
         }

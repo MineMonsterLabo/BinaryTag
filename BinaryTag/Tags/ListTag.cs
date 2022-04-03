@@ -2,8 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
-using BinaryIO;
 
 namespace BinaryTag.Tags
 {
@@ -99,7 +99,7 @@ namespace BinaryTag.Tags
 
         public T Get<T>(int index) where T : ITag
         {
-            return (T) _list[index];
+            return (T)_list[index];
         }
 
         public T GetOrNull<T>(int index) where T : class, ITag
@@ -107,26 +107,26 @@ namespace BinaryTag.Tags
             return _list[index] as T;
         }
 
-        public void Read(BinaryStream stream)
+        public void Read(BinaryReader reader)
         {
-            int len = stream.ReadInt();
-            ElementTagType = (TagType) stream.ReadByte();
+            int len = reader.ReadInt32();
+            ElementTagType = (TagType)reader.ReadByte();
             for (int i = 0; i < len; i++)
             {
                 ITag tag = TagFactory.CreateTag(ElementTagType);
-                tag.Read(stream);
+                tag.Read(reader);
 
                 Add(tag);
             }
         }
 
-        public void Write(BinaryStream stream)
+        public void Write(BinaryWriter writer)
         {
-            stream.WriteInt(Count);
-            stream.WriteByte((byte) ElementTagType);
+            writer.Write(Count);
+            writer.Write((byte)ElementTagType);
             foreach (ITag tag in _list)
             {
-                tag.Write(stream);
+                tag.Write(writer);
             }
         }
 
@@ -141,7 +141,7 @@ namespace BinaryTag.Tags
             ListTag tag = new ListTag(ElementTagType);
             foreach (ITag tag1 in _list)
             {
-                tag.Add((ITag) tag1.Clone());
+                tag.Add((ITag)tag1.Clone());
             }
 
             return tag;
@@ -159,14 +159,14 @@ namespace BinaryTag.Tags
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((ListTag) obj);
+            return Equals((ListTag)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return ((_list != null ? _list.GetHashCode() : 0) * 397) ^ (int) ElementTagType;
+                return ((_list != null ? _list.GetHashCode() : 0) * 397) ^ (int)ElementTagType;
             }
         }
 

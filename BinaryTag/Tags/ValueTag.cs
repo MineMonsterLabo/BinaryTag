@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using BinaryIO;
+using System.IO;
 
 namespace BinaryTag.Tags
 {
@@ -19,15 +19,15 @@ namespace BinaryTag.Tags
             Value = value;
         }
 
-        public abstract void Read(BinaryStream stream);
-        public abstract void Write(BinaryStream stream);
+        public abstract void Read(BinaryReader reader);
+        public abstract void Write(BinaryWriter write);
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((ValueTag<T>) obj);
+            return Equals((ValueTag<T>)obj);
         }
 
         public bool Equals(ValueTag<T> other)

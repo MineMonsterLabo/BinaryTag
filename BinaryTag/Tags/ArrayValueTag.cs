@@ -1,8 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using BinaryIO;
 
 namespace BinaryTag.Tags
 {
@@ -21,12 +21,12 @@ namespace BinaryTag.Tags
             Value = value;
         }
 
-        public abstract void Read(BinaryStream stream);
-        public abstract void Write(BinaryStream stream);
+        public abstract void Read(BinaryReader reader);
+        public abstract void Write(BinaryWriter write);
 
         public IEnumerator<T> GetEnumerator()
         {
-            return ((IEnumerable<T>) Value).GetEnumerator();
+            return ((IEnumerable<T>)Value).GetEnumerator();
         }
 
         public override bool Equals(object obj)
@@ -34,7 +34,7 @@ namespace BinaryTag.Tags
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((ArrayValueTag<T>) obj);
+            return Equals((ArrayValueTag<T>)obj);
         }
 
         public bool Equals(ArrayValueTag<T> other)
