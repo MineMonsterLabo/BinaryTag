@@ -1,6 +1,6 @@
 using System;
 using System.ComponentModel;
-using BinaryIO;
+using System.IO;
 
 namespace BinaryTag.Tags
 {
@@ -8,7 +8,7 @@ namespace BinaryTag.Tags
     {
         [Category("データ"), Description("タイプ")] TagType Type { get; }
 
-        void Read(BinaryStream stream);
-        void Write(BinaryStream stream);
+        void Read(BinaryReader reader);
+        void Write(BinaryWriter writer);
     }
 }

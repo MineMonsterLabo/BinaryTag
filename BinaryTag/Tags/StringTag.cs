@@ -1,4 +1,4 @@
-using BinaryIO;
+using System.IO;
 
 namespace BinaryTag.Tags
 {
@@ -17,19 +17,19 @@ namespace BinaryTag.Tags
                 Value = string.Empty;
         }
 
-        public override void Read(BinaryStream stream)
+        public override void Read(BinaryReader reader)
         {
-            Value = stream.ReadStringUtf8();
+            Value = reader.ReadString();
         }
 
-        public override void Write(BinaryStream stream)
+        public override void Write(BinaryWriter writer)
         {
-            stream.WriteStringUtf8(Value);
+            writer.Write(Value);
         }
 
         public override object Clone()
         {
-            return new StringTag((string) Value.Clone());
+            return new StringTag((string)Value.Clone());
         }
     }
 }
