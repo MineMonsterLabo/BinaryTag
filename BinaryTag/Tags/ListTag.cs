@@ -109,7 +109,7 @@ namespace BinaryTag.Tags
 
         public void Read(BinaryReader reader)
         {
-            int len = reader.ReadInt32();
+            int len = reader.Read7BitEncodedInt();
             ElementTagType = (TagType)reader.ReadByte();
             for (int i = 0; i < len; i++)
             {
@@ -122,7 +122,7 @@ namespace BinaryTag.Tags
 
         public void Write(BinaryWriter writer)
         {
-            writer.Write(Count);
+            writer.Write7BitEncodedInt(Count);
             writer.Write((byte)ElementTagType);
             foreach (ITag tag in _list)
             {

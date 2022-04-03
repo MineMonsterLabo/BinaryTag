@@ -16,7 +16,7 @@ namespace BinaryTag.Tags
 
         public override void Read(BinaryReader reader)
         {
-            int len = reader.ReadInt32();
+            int len = reader.Read7BitEncodedInt();
             Value = new long[len];
             for (int i = 0; i < len; i++)
                 Value[i] = reader.ReadInt64();
@@ -24,7 +24,7 @@ namespace BinaryTag.Tags
 
         public override void Write(BinaryWriter writer)
         {
-            writer.Write(Value.Length);
+            writer.Write7BitEncodedInt(Value.Length);
             for (int i = 0; i < Value.Length; i++)
                 writer.Write(Value[i]);
         }
