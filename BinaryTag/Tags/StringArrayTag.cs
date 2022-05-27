@@ -16,7 +16,11 @@ namespace BinaryTag.Tags
 
         public override void Read(BinaryReader reader)
         {
-            int len = reader.ReadInt32();
+#if NETSTANDARD
+            var len = reader.Read7BitEncodedIntPolyfill();
+#else
+            int len = reader.Read7BitEncodedInt();
+#endif
             Value = new string[len];
             for (int i = 0; i < len; i++)
                 Value[i] = reader.ReadString();
@@ -24,7 +28,11 @@ namespace BinaryTag.Tags
 
         public override void Write(BinaryWriter writer)
         {
-            writer.Write(Value.Length);
+#if NETSTANDARD
+            writer.Write7BitEncodedIntPolyfill(Value.Length);
+#else
+            writer.Write7BitEncodedInt(Value.Length);
+#endif
             for (int i = 0; i < Value.Length; i++)
                 writer.Write(Value[i]);
         }
