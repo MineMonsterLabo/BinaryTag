@@ -11,8 +11,8 @@ Not support Minecraft!</Description>
         <RepositoryUrl>https://github.com/hiroki19990625/BinaryTag.git</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>binary kvs file</PackageTags>
-        <PackageVersion>3.1.0</PackageVersion>
-        <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
+        <PackageVersion>3.2.0</PackageVersion>
+        <TargetFrameworks>net5.0;net6.0;netstandard2.1</TargetFrameworks>
     </PropertyGroup>
 
 </Project>
