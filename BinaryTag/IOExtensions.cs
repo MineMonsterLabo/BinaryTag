@@ -18,7 +18,7 @@ namespace BinaryTag
 
         public static MapTag ToMapTag(this byte[] buf)
         {
-            using (var stream = new MemoryStream())
+            using (var stream = new MemoryStream(buf))
             using (BinaryReader reader = new BinaryReader(stream))
             {
                 MapTag tag = new MapTag();
